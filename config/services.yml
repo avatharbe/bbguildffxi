@@ -3,7 +3,7 @@ services:
         class: avathar\bbguild_ffxi\game\ffxi_installer
         arguments:
             - '@dbal.conn'
-            - '@cache'
+            - '@cache.driver'
             - '@config'
             - '@user'
 
