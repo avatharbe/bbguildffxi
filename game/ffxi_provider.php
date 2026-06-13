@@ -35,7 +35,7 @@ class ffxi_provider implements game_provider_interface
 		return 'Final Fantasy XI';
 	}
 
-	public function get_installer(): game_install_interface
+	public function get_installer(): \avathar\bbguild\model\games\game_install_interface
 	{
 		return $this->installer;
 	}
@@ -60,7 +60,7 @@ class ffxi_provider implements game_provider_interface
 		return false;
 	}
 
-	public function get_api(): ?game_api_interface
+	public function get_api(): ?\avathar\bbguild\model\games\game_api_interface
 	{
 		return null;
 	}
