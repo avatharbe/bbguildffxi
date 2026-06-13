@@ -29,10 +29,17 @@ class ext_test extends TestCase
 			->with('avathar/bbguild')
 			->willReturn(true);
 
+		$user = $this->createMock(\phpbb\user::class);
+		$user->method('lang')->willReturnArgument(0);
+
 		$this->container = $this->createMock(\Symfony\Component\DependencyInjection\ContainerInterface::class);
-		$this->container->method('get')
-			->with('ext.manager')
-			->willReturn($ext_manager);
+		$this->container->method('get')->willReturnCallback(function ($id) use ($ext_manager, $user) {
+			return match ($id) {
+				'ext.manager' => $ext_manager,
+				'user' => $user,
+				default => null,
+			};
+		});
 
 		$this->extension_finder = $this->getMockBuilder(\phpbb\finder::class)
 			->disableOriginalConstructor()
@@ -63,10 +70,17 @@ class ext_test extends TestCase
 			->with('avathar/bbguild')
 			->willReturn(false);
 
+		$user = $this->createMock(\phpbb\user::class);
+		$user->method('lang')->willReturnArgument(0);
+
 		$container = $this->createMock(\Symfony\Component\DependencyInjection\ContainerInterface::class);
-		$container->method('get')
-			->with('ext.manager')
-			->willReturn($ext_manager);
+		$container->method('get')->willReturnCallback(function ($id) use ($ext_manager, $user) {
+			return match ($id) {
+				'ext.manager' => $ext_manager,
+				'user' => $user,
+				default => null,
+			};
+		});
 
 		$ext = new \avathar\bbguildffxi\ext(
 			$container,
@@ -78,6 +92,6 @@ class ext_test extends TestCase
 
 		$result = $ext->is_enableable();
 		$this->assertIsArray($result);
-		$this->assertStringContainsString('bbGuild core', $result[0]);
+		$this->assertStringContainsString('REQUIRES_BBGUILD', $result[0]);
 	}
 }
