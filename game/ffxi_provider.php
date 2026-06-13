@@ -10,8 +10,6 @@
 namespace avathar\bbguildffxi\game;
 
 use avathar\bbguild\model\games\game_provider_interface;
-use avathar\bbguild\model\games\game_install_interface;
-use avathar\bbguild\model\games\game_api_interface;
 
 class ffxi_provider implements game_provider_interface
 {
