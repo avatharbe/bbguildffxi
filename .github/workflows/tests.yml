@@ -28,9 +28,12 @@ jobs:
       RUN_PGSQL_JOBS: 0
       RUN_MSSQL_JOBS: 0
       RUN_WINDOWS_JOBS: 0
+      SNIFF: 1
+      IMAGE_ICC: 1
+      EPV: 1
 
   unit-tests:
-    name: PHP ${{ matrix.php }} - postgres
+    name: PHP ${{ matrix.php }} - postgres (unit + functional)
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -102,10 +105,9 @@ jobs:
         run: mkdir -p "phpBB/ext/$EXTNAME/.github" && cp .github/phpunit* "$_"
         working-directory: ./phpBB3
 
-      - name: Run unit tests
+      - name: Run unit and functional tests
         run: |
           phpBB/vendor/bin/phpunit \
               --configuration "phpBB/ext/$EXTNAME/.github/phpunit-postgres-github.xml" \
-              --bootstrap ./tests/bootstrap.php \
-              --exclude-group functional
+              --bootstrap ./tests/bootstrap.php
         working-directory: ./phpBB3
