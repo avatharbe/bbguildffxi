@@ -193,4 +193,47 @@ class ffxi_installer extends abstract_game_install
 
 		$this->db->sql_multi_insert($this->table('bb_language_table'), $sql_ary);
 	}
+
+	/**
+	 * Installs FFXI specializations (issue #331).
+	 *
+	 * FFXI has no additional named subclass/spec layer beneath its 22
+	 * jobs — see ffxi_provider::spec_catalog()'s docblock for why the
+	 * catalog is intentionally empty. This still overrides the abstract
+	 * no-op so the empty-catalog reasoning lives in one place (the
+	 * provider) rather than being silently duplicated/assumed here, and
+	 * so a future real spec layer (if the game ever gets one) only
+	 * needs to change spec_catalog().
+	 *
+	 * Skipped if bb_specializations_table isn't wired in (older core
+	 * installs that haven't run migration v200b4 yet).
+	 */
+	protected function install_specs(): void
+	{
+		if (!isset($this->table_names['bb_specializations_table']))
+		{
+			return;
+		}
+
+		$rows = [];
+		foreach (ffxi_provider::spec_catalog() as $class_id => $specs)
+		{
+			foreach ($specs as $spec)
+			{
+				$rows[] = [
+					'game_id'    => $this->game_id,
+					'class_id'   => (int) $class_id,
+					'role_id'    => (int) $spec['role_id'],
+					'spec_name'  => (string) $spec['spec_name'],
+					'spec_icon'  => (string) $spec['spec_icon'],
+					'spec_order' => (int) $spec['spec_order'],
+				];
+			}
+		}
+		if (!$rows)
+		{
+			return;
+		}
+		$this->db->sql_multi_insert($this->table('bb_specializations_table'), $rows);
+	}
 }

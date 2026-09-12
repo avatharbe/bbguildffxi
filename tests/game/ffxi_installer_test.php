@@ -227,15 +227,82 @@ class ffxi_installer_test extends TestCase
 		);
 	}
 
-	public function test_does_not_override_install_specs(): void
+	// ── Specializations (install_specs) ─────────────────────
+	//
+	// FFXI genuinely has no additional named subclass/spec layer
+	// beneath its 22 jobs (see ffxi_provider::spec_catalog()'s
+	// docblock — Support Job, Merit Points, Job Points and Master
+	// Levels are all numeric progression systems, not named specs).
+	// ffxi_installer now overrides install_specs() (mirroring
+	// gw2_installer's guard structure) but the catalog it reads from
+	// is intentionally empty, so no rows are ever inserted.
+
+	private function set_table_name(string $key, ?string $value): void
 	{
-		// No specializations are seeded yet for this game (separate,
-		// unimplemented ticket) — pin that install_specs() is still the
-		// abstract base class's no-op.
+		$ref = new \ReflectionClass($this->installer);
+		$tn = $ref->getProperty('table_names');
+		$tn->setAccessible(true);
+		$current = $tn->getValue($this->installer);
+
+		if ($value === null)
+		{
+			unset($current[$key]);
+		}
+		else
+		{
+			$current[$key] = $value;
+		}
+
+		$tn->setValue($this->installer, $current);
+	}
+
+	public function test_install_specs_is_overridden(): void
+	{
+		// Pins that this plugin has explicitly opted into the specs hook
+		// (rather than silently relying on the abstract no-op), even
+		// though its own catalog is empty.
 		$method = new \ReflectionMethod(ffxi_installer::class, 'install_specs');
 		$this->assertSame(
-			\avathar\bbguild\model\games\abstract_game_install::class,
+			ffxi_installer::class,
 			$method->getDeclaringClass()->getName()
 		);
+	}
+
+	public function test_install_specs_inserts_nothing_when_table_wired(): void
+	{
+		$this->set_table_name('bb_specializations_table', 'phpbb_bb_specializations');
+
+		$this->invoke_protected('install_specs');
+
+		$this->assertCount(0, $this->inserted, 'FFXI has no spec layer beneath its 22 jobs, so the catalog is empty and no rows are inserted even when the table is wired in');
+	}
+
+	public function test_install_specs_skips_when_table_not_wired(): void
+	{
+		$this->set_table_name('bb_specializations_table', null);
+
+		$this->invoke_protected('install_specs');
+
+		$this->assertCount(0, $this->inserted, 'install_specs() must no-op when bb_specializations_table is not in table_names');
+	}
+
+	public function test_spec_catalog_is_empty(): void
+	{
+		$this->assertSame(array(), \avathar\bbguildffxi\game\ffxi_provider::spec_catalog(), 'FFXI has no named specialization/subclass layer beneath its 22 jobs');
+	}
+
+	public function test_provider_implements_specialization_interface_with_empty_label_default(): void
+	{
+		$installer = $this->getMockBuilder(ffxi_installer::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$ext_manager = $this->getMockBuilder(\phpbb\extension\manager::class)
+			->disableOriginalConstructor()
+			->getMock();
+		$provider = new \avathar\bbguildffxi\game\ffxi_provider($installer, $ext_manager);
+
+		$this->assertInstanceOf(\avathar\bbguild\model\games\specialization_provider_interface::class, $provider);
+		$this->assertSame(array(), $provider->get_specializations());
+		$this->assertSame('Specialization', $provider->get_spec_label());
 	}
 }
