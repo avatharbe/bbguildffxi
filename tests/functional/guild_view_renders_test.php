@@ -35,8 +35,12 @@
  */
 class avathar_bbguildffxi_guild_view_renders_test extends phpbb_functional_test_case
 {
-	/** guild_id used by this fixture — distinct from core's own id=0/1 demo rows */
-	const GUILD_ID = 90101;
+	/**
+	 * guild_id used by this fixture — distinct from core's own id=0/1 demo
+	 * rows. Must stay within bb_guild.id's USINT range (signed SMALLINT on
+	 * Postgres, max 32767) — 90101 overflowed it and failed CI.
+	 */
+	const GUILD_ID = 20242;
 
 	static protected function setup_extensions()
 	{
