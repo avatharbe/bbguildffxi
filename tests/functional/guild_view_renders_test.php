@@ -112,7 +112,7 @@ class avathar_bbguildffxi_guild_view_renders_test extends phpbb_functional_test_
 			'tab_order'  => 0,
 			'tab_status' => 1,
 		)));
-		$tab_id = (int) $db->sql_nextid();
+		$tab_id = (int) $db->sql_last_inserted_id();
 
 		// Mirrors bbguild core's own seed_portal_layout() (migrations/v200b3)
 		// for the roster module, just against this test's own guild_id.
