@@ -3,8 +3,8 @@
   "type": "phpbb-extension",
   "description": "Final Fantasy XI game plugin for bbGuild. Provides FFXI classes, races, and factions.",
   "homepage": "https://github.com/avatharbe/bbguildffxi",
-  "version": "2.0.0-rc2",
-  "time": "2026-07-25",
+  "version": "2.1.0",
+  "time": "2026-09-22",
   "license": "GPL-2.0-only",
   "authors": [
     {
