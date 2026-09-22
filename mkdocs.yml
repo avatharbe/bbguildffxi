@@ -1,0 +1,45 @@
+site_name: bbGuild - Final Fantasy XI
+site_url: https://avatharbe.github.io/bbguildffxi/
+repo_url: https://github.com/avatharbe/bbguildffxi
+repo_name: avatharbe/bbguildffxi
+edit_uri: edit/main/contrib/
+
+docs_dir: contrib
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - Changelog: CHANGELOG.md
+
+exclude_docs: |
+  cleanup.sql
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
