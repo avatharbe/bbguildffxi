@@ -17,7 +17,7 @@ class data extends \phpbb\db\migration\container_aware_migration
 	public static function depends_on()
 	{
 		return [
-			'\avathar\bbguild\migrations\v200b4\release_2_0_0_b4',
+			'\avathar\bbguild\migrations\v200\release_2_0_0',
 		];
 	}
 
